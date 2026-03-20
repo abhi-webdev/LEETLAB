@@ -43,13 +43,13 @@ model Problem {
   difficulty Dificulty
   tags String[]
   userId String
-  example Json  
+  examples Json  
   constraints String
   hints String?
   editorial String?
 
   testcases Json
-  codesnippets Json
+  codeSnippets Json
   refererenceSolution Json
 
   createdAt DateTime @default(now())
