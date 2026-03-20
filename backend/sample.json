@@ -12,3 +12,49 @@
         "JAVA": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int a = sc.nextInt();\n        int b = sc.nextInt();\n        System.out.println(a + b);\n    }\n}"
     }
 }
+
+{
+    "title" : "Add two number",
+    "description" : "Given two number add them up",
+    "difficulty" : "EASY",
+    "tags" : ["Math", "Arithmetic"],
+    "examples" : {
+        "PYTHON" :{
+            "input" : "2,3",
+            "output" : "5",
+            "explanation" : "Adding 2 and 3 gives 5"
+        },
+        "JAVASCRIPT" :{
+            "input" : "5,3",
+            "output" : "8",
+            "explanation" : "Adding 5 and 3 gives 5"
+        }
+    },
+    "constraints" : "-10^9 <= a,b <= 10^9",
+    "testcases" : [
+        {
+            "input" : "100 200",
+            "output" : "300"
+        },
+        {
+            "input" : "500 -600",
+            "output" : "-100"
+        },
+        {
+            "input" : "0 0",
+            "output" : "0"
+        }
+    ],
+    "codeSnippets": {
+        "JAVASCRIPT": "const fs = require('fs');\n\nfunction addTwoNumbers(a, b) {\n   // Write your code here\n   // Return the sum of a and b\n   return a + b;\n}\n\n// Reading input from stdin (using fs to read all input)\nconst input = fs.readFileSync(0, 'utf-8').trim();\nconst [a, b] = input.split(' ').map(Number);\n\nconsole.log(addTwoNumbers(a, b));",
+
+        "PYTHON": "import sys\n\ndef add_two_numbers(a, b):\n    # Write your code here\n    # Return the sum of a and b\n    return a + b\n\ninput_line = sys.stdin.read().strip()\na, b = map(int, input_line.split())\n\nprint(add_two_numbers(a, b))",
+
+        "JAVA": "import java.util.*;\n\npublic class Main {\n    public static int addTwoNumbers(int a, int b) {\n        // Write your code here\n        return a + b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int a = sc.nextInt();\n        int b = sc.nextInt();\n        System.out.println(addTwoNumbers(a, b));\n    }\n}"
+    },
+     "refererenceSolutions": {
+        "JAVASCRIPT": "const fs = require('fs');\n\n// Reading input from stdin (using fs to read all input)\nconst input = fs.readFileSync(0, 'utf-8').trim();\nconst [a, b] = input.split(' ').map(Number);\n\nconsole.log(a + b);",
+        "PYTHON": "import sys\ninput_line = sys.stdin.read()\na, b = map(int, input_line.split())\nprint(a + b)",
+        "JAVA": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int a = sc.nextInt();\n        int b = sc.nextInt();\n        System.out.println(a + b);\n    }\n}"
+    }
+}
