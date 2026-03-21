@@ -5,14 +5,17 @@ import { Link } from "react-router-dom";
 import { Code, Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
 import { z } from "zod";
 import AuthImagePattern from "../components/AuthImagePattern";
+import { useAuthStore } from "../store/useAuthStore";
 
 const signUpSchema = z.object({
   email: z.string().email("Enter your email"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   name: z.string().min(3, "Name must be at least 3 characters"),
 });
+
 function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const {signup, isSigninUp} = useAuthStore();
   const {
     register,
     handleSubmit,
@@ -21,7 +24,13 @@ function SignUpPage() {
     resolver: zodResolver(signUpSchema),
   });
   const onSubmit = async (data) => {
-    console.log(data);
+    try {
+      await signup(data);
+      console.log("Signup data", data);
+      
+    } catch (error) {
+      console.error("SignUp failed:", error);
+    }
   };
   return (
     <div className='h-screen grid lg:grid-cols-2'>
@@ -125,17 +134,16 @@ function SignUpPage() {
             <button
               type="submit"
               className="btn btn-primary w-full"
-            //  disabled={isSigninUp}
+             disabled={isSigninUp}
             >
-               {/* {isSigninUp ? (
+               {isSigninUp ? (
                 <>
                   <Loader2 className="h-5 w-5 animate-spin" />
                   Loading...
                 </>
               ) : (
                 "Sign in"
-              )} */}
-              SignUp
+              )}
             </button>
           </form>
 
