@@ -93,7 +93,7 @@ export const getAllProblems = async (req, res) => {
         include: {
           solvedBy: {
             where : {
-              userId: req.user.id,
+              id: req.user.id,
             },
           },
         },
@@ -176,19 +176,18 @@ export const deleteProblem = async (req, res) => {
   }
 };
 export const getProblemsSolvedByUser = async (req, res) => {
+  const userId = req.user?.id
   try {
     const problems = await db.problem.findMany({
       where: {
         solvedBy: {
           some: {
-            userId: req.user.id,
+            userId: userId,
           },
         },
       },
       include: {
-        solvedBy: {
-          userId: req.user.id,
-        },
+        solvedBy: true,
       },
     });
 

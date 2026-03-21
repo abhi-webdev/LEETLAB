@@ -11,7 +11,7 @@ import Layout from "./layout/Layout";
 import AdminRoute from "./components/AdminRoute";
 import AddProblem from "./page/AddProblem";
 import ProblemPage from "./page/ProblemPage";
-// import Profile from "./page/Profile";
+import Profile from "./page/Profile";
 function App() {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
 
@@ -53,11 +53,11 @@ function App() {
           <Route path="/add-problem" element={authUser ? <AddProblem /> : <Navigate to="/" />} />
 
         </Route>
-        {/* <Route
+        <Route
           path="/profile"
           element={authUser ? <Profile /> : <Navigate to="/login" />}
 
-        /> */}
+        />
       </Routes>
     </div>
   );
