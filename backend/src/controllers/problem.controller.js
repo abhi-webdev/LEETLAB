@@ -6,7 +6,6 @@ import {
 } from "../libs/judge0.lib.js";
 
 export const createProblem = async (req, res) => {
-  // going to all the data from request body
   const {
     title,
     description,
@@ -16,19 +15,13 @@ export const createProblem = async (req, res) => {
     constraints,
     testcases,
     codeSnippets,
-    refererenceSolutions,
+    referenceSolutions,
   } = req.body;
-  // goint to check role of the user
-  if (req.user.role !== "ADMIN") {
-    return res
-      .status(403)
-      .json({ error: "You are not allowed to create a problem" });
-  }
-  // loop through each reference solution for different language
+
+  // going to check the user role once again
+
   try {
-    for (const [language, solutionCode] of Object.entries(
-      refererenceSolutions,
-    )) {
+    for (const [language, solutionCode] of Object.entries(referenceSolutions)) {
       const languageId = getJudge0LanguageId(language);
 
       if (!languageId) {
@@ -37,6 +30,7 @@ export const createProblem = async (req, res) => {
           .json({ error: `Language ${language} is not supported` });
       }
 
+      //
       const submissions = testcases.map(({ input, output }) => ({
         source_code: solutionCode,
         language_id: languageId,
@@ -52,43 +46,59 @@ export const createProblem = async (req, res) => {
 
       for (let i = 0; i < results.length; i++) {
         const result = results[i];
-        console.log("Results: ", result);
-
+        console.log("Result-----", result);
+        // console.log(
+        //   `Testcase ${i + 1} and Language ${language} ----- result ${JSON.stringify(result.status.description)}`
+        // );
         if (result.status.id !== 3) {
           return res.status(400).json({
-            error: `Testcases ${i + 1} failed for this language  ${language}`,
+            error: `Testcase ${i + 1} failed for language ${language}`,
           });
         }
       }
-      // save the problem to the database
-      const newProblem = await db.problem.create({
-        data: {
-          title,
-          description,
-          difficulty,
-          tags,
-          examples,
-          constraints,
-          testcases,
-          codeSnippets,
-          refererenceSolutions,
-          userId: req.user.id,
-        },
-      });
-      return res.status(201).json({
-        sucess: true,
-        message: "Problem created successfully",
-        newProblem,
-      });
     }
+
+    const newProblem = await db.problem.create({
+      data: {
+        title,
+        description,
+        difficulty,
+        tags,
+        examples,
+        constraints,
+        testcases,
+        codeSnippets,
+        referenceSolutions,
+        userId: req.user.id,
+      },
+    });
+
+    return res.status(201).json({
+      sucess: true,
+      message: "Problem Created Successfully",
+      problem: newProblem,
+    });
   } catch (error) {
-    console.error("Error creating problem", error);
-    return res.status(500).json({ error: "Error creating problem" });
+    console.log(error);
+    return res.status(500).json({
+      error: "Error While Creating Problem",
+    });
   }
 };
+
 export const getAllProblems = async (req, res) => {
   try {
-    const problems = await db.problem.findMany();
+    const problems = await db.problem.findMany(
+      {
+        include: {
+          solvedBy: {
+            where : {
+              userId: req.user.id,
+            },
+          },
+        },
+      }
+    );
     if (!problems) {
       return res.status(404).json({
         error: "No problem found",

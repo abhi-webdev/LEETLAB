@@ -1,3 +1,4 @@
+import { db } from "../libs/db.js";
 export const getAllSubmission = async(req, res) => {
     try {
         const userId = req.user.id;
@@ -43,7 +44,7 @@ export const getSubmissionForProblem = async(req, res) => {
 export const getAllTheSubmissionsForProblem = async(req, res) => {
     try {
         const problemId = req.params.problemId;
-        const submissions = await db.submission.count({
+        const submission = await db.submission.count({
             where : {
                 problemId: problemId
             }
@@ -52,7 +53,7 @@ export const getAllTheSubmissionsForProblem = async(req, res) => {
         res.status(200).json({
             success: true,
             message : "Submission fetched successfully",
-            count : submissions
+            count : submission
         })
 
     } catch (error) {

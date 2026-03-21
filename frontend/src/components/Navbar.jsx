@@ -31,7 +31,8 @@ const Navbar = ()=>{
                 <img
                   src={
                     authUser?.image ||
-                    "https://avatar.iran.liara.run/public/boy"
+                    // "https://avatar.iran.liara.run/public/boy"
+                    `https://api.dicebear.com/9.x/adventurer/svg?seed=${authUser?.email}}`
                   }
                   alt="User Avatar"
                   className="object-cover"
