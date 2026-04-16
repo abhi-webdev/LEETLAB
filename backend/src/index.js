@@ -1,24 +1,27 @@
-import express from 'express';
+import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
-import authRoutes from './routes/auth.routes.js';
-import problemRoutes from './routes/problem.routes.js';
-import executionRoutes from './routes/executeCode.routes.js';
-import submissionRoutes from './routes/submission.routes.js';
-import playlistRoutes from './routes/playlist.routes.js';
+import authRoutes from "./routes/auth.routes.js";
+import problemRoutes from "./routes/problem.routes.js";
+import executionRoutes from "./routes/executeCode.routes.js";
+import submissionRoutes from "./routes/submission.routes.js";
+import playlistRoutes from "./routes/playlist.routes.js";
 
 dotenv.config();
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({
-    origin: "http://localhost:5173",
-    credentials: true
-}))
+app.use(
+    cors({
+        // origin: "http://localhost:5173"
+        origin: ["http://localhost:5173", process.env.CLIENT_URL],
+        credentials: true,
+    }),
+);
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/problems", problemRoutes);
