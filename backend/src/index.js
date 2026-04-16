@@ -15,13 +15,15 @@ const port = process.env.PORT || 8080;
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(
-    cors({
-        // origin: "http://localhost:5173"
-        origin: ["http://localhost:5173", process.env.CLIENT_URL],
-        credentials: true,
-    }),
-);
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    process.env.CLIENT_URL
+  ],
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/problems", problemRoutes);
