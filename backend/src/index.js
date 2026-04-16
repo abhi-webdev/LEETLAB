@@ -18,6 +18,7 @@ app.use(cookieParser());
 app.use(cors({
   origin: [
     "http://localhost:5173",
+    "https://leetlab-eta.vercel.app",
     process.env.CLIENT_URL
   ],
   credentials: true,
