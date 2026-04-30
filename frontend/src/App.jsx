@@ -13,6 +13,10 @@ import SignUpPage from "./page/SignUpPage";
 import AddProblem from "./page/AddProblem";
 import ProblemPage from "./page/ProblemPage";
 import Profile from "./page/Profile";
+import ProblemsPage from "./page/ProblemsPage";
+import ContestListPage from "./page/ContestListPage";
+import ContestDetailPage from "./page/ContestDetailPage";
+import CreateContestPage from "./page/CreateContestPage";
 
 function App() {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -33,11 +37,17 @@ function App() {
       <Toaster />
       <Routes>
         <Route path="/" element={<Layout /> }>
-          <Route
-          index
-          element={authUser ? <HomePage /> : <Navigate to="/login" />}
-        />
+          {/* Public route */}
+          <Route index element={<HomePage />} />
 
+          {/* Protected routes */}
+          <Route path="/problems" element={authUser ? <ProblemsPage /> : <Navigate to="/login" />} />
+          <Route path="/contests" element={authUser ? <ContestListPage /> : <Navigate to="/login" />} />
+          <Route path="/profile" element={authUser ? <Profile /> : <Navigate to="/login" />} />
+          <Route element={<AdminRoute/>}>
+            <Route path="/add-problem" element={authUser ? <AddProblem /> : <Navigate to="/" />} />
+            <Route path="/create-contest" element={<CreateContestPage />} />
+          </Route>
         </Route>
         
         <Route
@@ -50,16 +60,7 @@ function App() {
         />
 
         <Route path="/problem/:id" element={authUser ? <ProblemPage /> : <Navigate to={"/login"} />} />
-
-        <Route element={<AdminRoute/>}>
-          <Route path="/add-problem" element={authUser ? <AddProblem /> : <Navigate to="/" />} />
-
-        </Route>
-        <Route
-          path="/profile"
-          element={authUser ? <Profile /> : <Navigate to="/login" />}
-
-        />
+        <Route path="/contest/:id" element={authUser ? <ContestDetailPage /> : <Navigate to="/login" />} />
       </Routes>
     </div>
   );

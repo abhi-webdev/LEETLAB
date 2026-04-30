@@ -8,6 +8,7 @@ import problemRoutes from "./routes/problem.routes.js";
 import executionRoutes from "./routes/executeCode.routes.js";
 import submissionRoutes from "./routes/submission.routes.js";
 import playlistRoutes from "./routes/playlist.routes.js";
+import contestRoutes from "./routes/contest.routes.js";
 
 dotenv.config();
 const app = express();
@@ -31,6 +32,7 @@ app.use("/api/v1/problems", problemRoutes);
 app.use("/api/v1/execute-code", executionRoutes);
 app.use("/api/v1/submission", submissionRoutes);
 app.use("/api/v1/playlist", playlistRoutes);
+app.use("/api/v1/contest", contestRoutes);
 
 app.get("/", (req, res) => {
     res.send("Hello gyus, welcome to leetlab");
