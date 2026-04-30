@@ -28,7 +28,7 @@ function ContestListPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center mt-14 px-4 w-full">
+    <div className="min-h-screen flex flex-col items-center px-4 w-full">
       {/* Background glow */}
       <div className="absolute top-16 left-0 w-full md:w-1/3 h-1/3 bg-primary opacity-20 blur-3xl rounded-md"></div>
       <div className="absolute top-32 right-0 w-1/4 h-1/4 bg-secondary opacity-15 blur-3xl rounded-full"></div>

@@ -4,7 +4,7 @@ import Navbar from '../components/Navbar'
 
 function Layout() {
   return (
-    <div>
+    <div className="pt-28">
         <Navbar/>
         <Outlet/>
     </div>

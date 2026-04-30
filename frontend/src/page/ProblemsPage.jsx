@@ -117,7 +117,7 @@ function ProblemsPage() {
   }
 
   return (
-    <div className="min-h-screen px-4 py-8 w-full">
+    <div className="px-4 w-full">
       <div className="max-w-7xl mx-auto">
         {/* ── Header ── */}
         <div className="mb-8">

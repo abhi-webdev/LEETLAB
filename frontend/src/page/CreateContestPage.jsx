@@ -93,7 +93,7 @@ function CreateContestPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center py-12 px-4">
+    <div className="min-h-screen flex flex-col items-center pb-12 px-4">
       {/* Background glow */}
       <div className="absolute top-20 left-10 w-72 h-72 bg-primary opacity-10 blur-3xl rounded-full"></div>
       <div className="absolute bottom-20 right-10 w-64 h-64 bg-secondary opacity-10 blur-3xl rounded-full"></div>

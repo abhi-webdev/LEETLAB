@@ -53,32 +53,26 @@ function HomePage() {
       <section className="relative z-10 flex flex-col items-center justify-center min-h-[85vh] px-4 text-center">
         {/* Floating Language Icons */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {/* Top left */}
-          <div className="absolute top-[12%] left-[8%] text-4xl animate-float-slow opacity-60 select-none">
-            <span className="bg-blue-500/10 text-blue-400 px-3 py-1.5 rounded-xl font-bold border border-blue-500/20">C++</span>
+          <div className="absolute top-1/4 left-10 md:left-20 animate-float-slow bg-base-300 backdrop-blur-md px-4 py-2 rounded-2xl border border-base-content/10 shadow-2xl z-20">
+            <span className="text-blue-400 font-bold">C++</span>
           </div>
-          {/* Top center */}
-          <div className="absolute top-[8%] left-[42%] text-3xl animate-float-medium opacity-50 select-none">
-            <span className="bg-yellow-500/10 text-yellow-400 px-3 py-1.5 rounded-xl font-bold border border-yellow-500/20">JS</span>
+          <div className="absolute top-1/3 right-10 md:right-32 animate-float-medium bg-base-300 backdrop-blur-md px-4 py-2 rounded-2xl border border-base-content/10 shadow-2xl z-20">
+            <span className="text-cyan-400 font-bold">Go</span>
           </div>
-          {/* Top right */}
-          <div className="absolute top-[15%] right-[10%] text-3xl animate-float-fast opacity-50 select-none">
-            <span className="bg-cyan-500/10 text-cyan-400 px-3 py-1.5 rounded-xl font-bold border border-cyan-500/20">Go</span>
+          <div className="absolute bottom-1/4 left-12 md:left-40 animate-float-fast bg-base-300 backdrop-blur-md px-4 py-2 rounded-2xl border border-base-content/10 shadow-2xl z-20">
+            <span className="text-orange-400 font-bold">Java</span>
           </div>
-          {/* Mid left */}
-          <div className="absolute top-[55%] left-[5%] text-3xl animate-float-medium opacity-40 select-none">
-            <span className="bg-red-500/10 text-red-400 px-3 py-1.5 rounded-xl font-bold border border-red-500/20">Java</span>
+          <div className="absolute bottom-1/3 right-12 md:right-20 animate-float-slow bg-base-300 backdrop-blur-md px-4 py-2 rounded-2xl border border-base-content/10 shadow-2xl z-20">
+            <span className="text-green-400 font-bold">Py</span>
           </div>
-          {/* Mid right */}
-          <div className="absolute top-[45%] right-[6%] text-3xl animate-float-slow opacity-50 select-none">
-            <span className="bg-green-500/10 text-green-400 px-3 py-1.5 rounded-xl font-bold border border-green-500/20">Py</span>
+          <div className="absolute top-1/2 left-1/4 animate-float-medium bg-base-300 backdrop-blur-md px-4 py-2 rounded-2xl border border-base-content/10 shadow-2xl z-20 hidden md:block">
+            <span className="text-yellow-400 font-bold">JS</span>
           </div>
-          {/* Bottom */}
-          <div className="absolute bottom-[20%] right-[25%] text-2xl animate-float-fast opacity-40 select-none">
-            <span className="bg-purple-500/10 text-purple-400 px-3 py-1.5 rounded-xl font-bold border border-purple-500/20">TS</span>
+          <div className="absolute top-2/3 right-1/4 animate-float-fast bg-base-300 backdrop-blur-md px-4 py-2 rounded-2xl border border-base-content/10 shadow-2xl z-20 hidden md:block">
+            <span className="text-primary font-bold">TS</span>
           </div>
-          <div className="absolute bottom-[25%] left-[20%] text-2xl animate-float-medium opacity-40 select-none">
-            <span className="bg-orange-500/10 text-orange-400 px-3 py-1.5 rounded-xl font-bold border border-orange-500/20">Rust</span>
+          <div className="absolute bottom-1/4 right-1/3 animate-float-medium bg-base-300 backdrop-blur-md px-4 py-2 rounded-2xl border border-base-content/10 shadow-2xl z-20 hidden md:block">
+            <span className="text-orange-600 font-bold">Rust</span>
           </div>
         </div>
 
@@ -88,7 +82,7 @@ function HomePage() {
 
         {/* Hero Text */}
         <div className="relative z-10 max-w-4xl mx-auto">
-          <h1 className="text-5xl md:text-7xl font-extrabold leading-tight tracking-tight">
+          <h1 className="text-6xl md:text-8xl font-black mb-8 tracking-tighter text-base-content">
             A Lab where Coders{" "}
             <span className="relative inline-block">
               <span className="relative z-10">Practice</span>
@@ -102,7 +96,7 @@ function HomePage() {
             Themselves
           </h1>
 
-          <p className="mt-6 text-lg md:text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg md:text-xl text-base-content/70 max-w-2xl mx-auto mb-12 leading-relaxed">
             Train rigorously, solve real challenges, and sharpen your coding mind.
             <br />
             LeetLab is your lab to practice and push past your limits — built for coders who want to lead.
@@ -114,14 +108,14 @@ function HomePage() {
               <>
                 <Link
                   to="/problems"
-                  className="btn btn-lg bg-white text-black hover:bg-gray-200 border-none rounded-xl px-8 font-bold gap-2 shadow-lg shadow-white/10"
+                  className="btn btn-lg btn-primary rounded-xl px-8 font-bold gap-2 shadow-lg shadow-primary/20"
                 >
                   Start Solving
                   <ArrowRight className="w-5 h-5" />
                 </Link>
                 <Link
                   to="/contests"
-                  className="btn btn-lg btn-outline rounded-xl px-8 font-bold gap-2 border-gray-600 hover:bg-white/5"
+                  className="btn btn-lg btn-outline rounded-xl px-8 font-bold gap-2 border-base-content/20 hover:bg-base-content/5"
                 >
                   <Trophy className="w-5 h-5" />
                   Explore Contests
@@ -131,16 +125,17 @@ function HomePage() {
               <>
                 <Link
                   to="/signup"
-                  className="btn btn-lg bg-white text-black hover:bg-gray-200 border-none rounded-xl px-8 font-bold gap-2 shadow-lg shadow-white/10"
+                  className="btn btn-lg btn-primary rounded-xl px-8 font-bold gap-2 shadow-lg shadow-primary/20"
                 >
                   Join For Free
                   <ArrowRight className="w-5 h-5" />
                 </Link>
                 <Link
                   to="/login"
-                  className="btn btn-lg btn-outline rounded-xl px-8 font-bold gap-2 border-gray-600 hover:bg-white/5"
+                  className="btn btn-lg btn-outline rounded-xl px-8 font-bold gap-2 border-base-content/20 hover:bg-base-content/5"
                 >
-                  Log In
+                  Sign In
+                  <LogIn className="w-5 h-5" />
                 </Link>
               </>
             )}

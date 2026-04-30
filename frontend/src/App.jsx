@@ -17,9 +17,13 @@ import ProblemsPage from "./page/ProblemsPage";
 import ContestListPage from "./page/ContestListPage";
 import ContestDetailPage from "./page/ContestDetailPage";
 import CreateContestPage from "./page/CreateContestPage";
+import PricingPage from "./page/PricingPage";
+
+import { useThemeStore } from "./store/useThemeStore";
 
 function App() {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
+  const { theme } = useThemeStore();
 
   useEffect(() => {
     checkAuth();
@@ -27,13 +31,13 @@ function App() {
 
   if (isCheckingAuth && !authUser)
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center h-screen" data-theme={theme}>
         <Loader className="size-10 animate-spin" />
       </div>
     );
 
   return (
-    <div className="min-h-screen w-full flex flex-col">
+    <div className="min-h-screen w-full flex flex-col" data-theme={theme}>
       <Toaster />
       <Routes>
         <Route path="/" element={<Layout /> }>
@@ -44,6 +48,7 @@ function App() {
           <Route path="/problems" element={authUser ? <ProblemsPage /> : <Navigate to="/login" />} />
           <Route path="/contests" element={authUser ? <ContestListPage /> : <Navigate to="/login" />} />
           <Route path="/profile" element={authUser ? <Profile /> : <Navigate to="/login" />} />
+          <Route path="/pricing" element={<PricingPage />} />
           <Route element={<AdminRoute/>}>
             <Route path="/add-problem" element={authUser ? <AddProblem /> : <Navigate to="/" />} />
             <Route path="/create-contest" element={<CreateContestPage />} />

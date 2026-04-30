@@ -583,7 +583,7 @@ const CreateProblemForm = () => {
 }
 
   return (
-    <div className='container mx-auto py-8 px-4 max-w-7xl'>
+    <div className='container mx-auto pb-8 px-4 max-w-7xl'>
   <div className="card bg-base-100 shadow-xl">
         <div className="card-body p-6 md:p-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 pb-4 border-b">

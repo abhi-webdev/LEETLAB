@@ -52,13 +52,8 @@ const ProblemPage = () => {
 
   useEffect(() => {
     if (problem) {
-      const savedCode =
-        problem.lastSubmission?.language === selectedLanguage
-          ? problem.lastSubmission.sourceCode
-          : null;
-
       setCode(
-        savedCode || problem.codeSnippets?.[selectedLanguage] || ""
+        problem.codeSnippets?.[selectedLanguage] || submission?.sourceCode || ""
       );
       setTestCases(
         problem.testcases?.map((tc) => ({
@@ -227,7 +222,7 @@ const ProblemPage = () => {
           >
             {!isExecuting && <Play className="w-3 h-3" />} Run
           </button>
-          <button 
+          <button
             className="btn btn-success btn-sm gap-2"
             onClick={(e) => handleRunCode(e, true)}
             disabled={isExecuting}
@@ -239,15 +234,15 @@ const ProblemPage = () => {
 
       {/* Main Workspace */}
       <div className="flex flex-col lg:flex-row flex-1 p-2 gap-2 min-h-0 overflow-y-auto lg:overflow-hidden">
-        
+
         {/* Left Panel - Problem Details */}
         <div className="flex-1 bg-base-100 rounded-xl flex flex-col border border-base-300 shadow-sm overflow-hidden min-h-[500px] lg:min-h-0">
           {/* Tabs Header */}
           <div className="flex border-b border-base-300 bg-base-200/50 flex-none px-2 pt-2 overflow-x-auto whitespace-nowrap scrollbar-hide">
-             <button className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'description' ? 'border-primary text-primary' : 'border-transparent text-base-content/70 hover:text-base-content'}`} onClick={() => setActiveTab('description')}><FileText className="w-4 h-4"/> Description</button>
-             <button className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'submissions' ? 'border-primary text-primary' : 'border-transparent text-base-content/70 hover:text-base-content'}`} onClick={() => setActiveTab('submissions')}><Code2 className="w-4 h-4"/> Submissions</button>
-             <button className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'discussion' ? 'border-primary text-primary' : 'border-transparent text-base-content/70 hover:text-base-content'}`} onClick={() => setActiveTab('discussion')}><MessageSquare className="w-4 h-4"/> Discussion</button>
-             <button className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'hints' ? 'border-primary text-primary' : 'border-transparent text-base-content/70 hover:text-base-content'}`} onClick={() => setActiveTab('hints')}><Lightbulb className="w-4 h-4"/> Hints</button>
+            <button className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'description' ? 'border-primary text-primary' : 'border-transparent text-base-content/70 hover:text-base-content'}`} onClick={() => setActiveTab('description')}><FileText className="w-4 h-4" /> Description</button>
+            <button className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'submissions' ? 'border-primary text-primary' : 'border-transparent text-base-content/70 hover:text-base-content'}`} onClick={() => setActiveTab('submissions')}><Code2 className="w-4 h-4" /> Submissions</button>
+            <button className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'discussion' ? 'border-primary text-primary' : 'border-transparent text-base-content/70 hover:text-base-content'}`} onClick={() => setActiveTab('discussion')}><MessageSquare className="w-4 h-4" /> Discussion</button>
+            <button className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'hints' ? 'border-primary text-primary' : 'border-transparent text-base-content/70 hover:text-base-content'}`} onClick={() => setActiveTab('hints')}><Lightbulb className="w-4 h-4" /> Hints</button>
           </div>
           {/* Tab Content */}
           <div className="flex-1 overflow-y-auto p-6 bg-base-100">
@@ -257,7 +252,7 @@ const ProblemPage = () => {
 
         {/* Right Panel - Code & Console */}
         <div className="flex-1 flex flex-col gap-2 min-h-[800px] lg:min-h-0">
-          
+
           {/* Top Right - Editor */}
           <div className="flex-[3] bg-base-100 rounded-xl flex flex-col border border-base-300 shadow-sm overflow-hidden min-h-[400px]">
             <div className="flex items-center justify-between px-4 py-2 border-b border-base-300 bg-base-200/50 flex-none">
