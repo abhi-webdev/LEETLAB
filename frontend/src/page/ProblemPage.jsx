@@ -52,8 +52,13 @@ const ProblemPage = () => {
 
   useEffect(() => {
     if (problem) {
+      const savedCode =
+        problem.lastSubmission?.language === selectedLanguage
+          ? problem.lastSubmission.sourceCode
+          : null;
+
       setCode(
-        problem.codeSnippets?.[selectedLanguage] || submission?.sourceCode || ""
+        savedCode || problem.codeSnippets?.[selectedLanguage] || ""
       );
       setTestCases(
         problem.testcases?.map((tc) => ({

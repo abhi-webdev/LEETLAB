@@ -93,7 +93,7 @@ export const getAllProblems = async (req, res) => {
         include: {
           solvedBy: {
             where : {
-              id: req.user.id,
+              userId: req.user.id,
             },
           },
         },
@@ -131,10 +131,23 @@ export const getProblemById = async (req, res) => {
       });
     }
 
+    const lastSubmission = await db.submission.findFirst({
+      where: {
+        problemId: id,
+        userId: req.user.id,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
     res.status(200).json({
       success: true,
       message: "Problem fetched successfully",
-      problem,
+      problem: {
+        ...problem,
+        lastSubmission,
+      },
     });
   } catch (error) {
     console.error("Error creating problem", error);
