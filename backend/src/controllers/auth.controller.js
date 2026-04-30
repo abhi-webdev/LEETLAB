@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import { UserRole } from "../generated/prisma/index.js";
 
 export const register = async (req, res) => {
-    const { email, password, name } = req.body;
+    const { email, password, name, role } = req.body;
     try {
         if (!email || !password || !name)
             return res.status(400).json({ msg: "Please fill all fields" });
@@ -18,13 +18,15 @@ export const register = async (req, res) => {
             return res.status(400).json({ msg: "User already exists" });
         }
 
+        const validRole = role === "ADMIN" ? UserRole.ADMIN : UserRole.USER;
+
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = await db.user.create({
             data: {
                 email,
                 password: hashedPassword,
                 name,
-                role: UserRole.USER,
+                role: validRole,
             },
         });
 
@@ -145,5 +147,36 @@ export const check = async (req, res) => {
         console.error("Error check user", error);
 
         res.status(400).json({ error: "Error check user", msg: error.message });
+    }
+};
+
+export const updateProfile = async (req, res) => {
+    try {
+        const { image } = req.body;
+        const userId = req.user.id;
+
+        if (!image) {
+            return res.status(400).json({ error: "Profile image is required" });
+        }
+
+        const updatedUser = await db.user.update({
+            where: { id: userId },
+            data: { image },
+        });
+
+        res.status(200).json({
+            success: true,
+            msg: "Profile updated successfully",
+            user: {
+                id: updatedUser.id,
+                name: updatedUser.name,
+                email: updatedUser.email,
+                role: updatedUser.role,
+                image: updatedUser.image,
+            },
+        });
+    } catch (error) {
+        console.error("Error updating profile", error);
+        res.status(500).json({ error: "Error updating profile", msg: error.message });
     }
 };

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "react-router-dom";
-import { Code, Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
+import { Code, Eye, EyeOff, Loader2, Lock, Mail, Shield } from "lucide-react";
 import { z } from "zod";
 import AuthImagePattern from "../components/AuthImagePattern";
 import { useAuthStore } from "../store/useAuthStore";
@@ -11,6 +11,7 @@ const signUpSchema = z.object({
   email: z.string().email("Enter your email"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   name: z.string().min(3, "Name must be at least 3 characters"),
+  role: z.enum(["USER", "ADMIN"]).default("USER"),
 });
 
 function SignUpPage() {
@@ -127,6 +128,30 @@ function SignUpPage() {
               </div>
               {errors.password && (
                 <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+              )}
+            </div>
+
+            {/* Role */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-medium">Account Type</span>
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Shield className="h-5 w-5 text-base-content/40" />
+                </div>
+                <select
+                  {...register("role")}
+                  className={`select select-bordered w-full pl-10 ${
+                    errors.role ? "select-error" : ""
+                  }`}
+                >
+                  <option value="USER">User (Solve problems)</option>
+                  <option value="ADMIN">Admin (Create problems)</option>
+                </select>
+              </div>
+              {errors.role && (
+                <p className="text-red-500 text-sm mt-1">{errors.role.message}</p>
               )}
             </div>
 

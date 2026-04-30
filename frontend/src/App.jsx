@@ -2,16 +2,18 @@ import React, { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
+import { useAuthStore } from "./store/useAuthStore";
+import { Loader } from "lucide-react";
+import Layout from "./layout/Layout";
+import AdminRoute from "./components/AdminRoute";
+
 import HomePage from "./page/HomePage";
 import LoginPage from "./page/LoginPage";
 import SignUpPage from "./page/SignUpPage";
-import { useAuthStore } from "./store/useAuthStore";
-import {Loader } from "lucide-react";
-import Layout from "./layout/Layout";
-import AdminRoute from "./components/AdminRoute";
 import AddProblem from "./page/AddProblem";
 import ProblemPage from "./page/ProblemPage";
 import Profile from "./page/Profile";
+
 function App() {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
 
@@ -27,7 +29,7 @@ function App() {
     );
 
   return (
-    <div className="flex flex-col items-center justify-start">
+    <div className="min-h-screen w-full flex flex-col">
       <Toaster />
       <Routes>
         <Route path="/" element={<Layout /> }>

@@ -15,6 +15,7 @@ import {
   Users,
   ThumbsUp,
   Home,
+  CheckCircle,
 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { useProblemStore } from "../store/useProblemStore";
@@ -38,7 +39,7 @@ const ProblemPage = () => {
 
   const [code, setCode] = useState("");
   const [activeTab, setActiveTab] = useState("description");
-  const [selectedLanguage, setSelectedLanguage] = useState("javascript");
+  const [selectedLanguage, setSelectedLanguage] = useState("JAVASCRIPT");
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [testcases, setTestCases] = useState([]);
 
@@ -77,27 +78,20 @@ const ProblemPage = () => {
     setCode(problem.codeSnippets?.[lang] || "");
   };
 
-  const handleRunCode = (e) => {
+  const handleRunCode = (e, isSubmit = false) => {
     e.preventDefault();
     try {
       const language_id = getLanguageId(selectedLanguage);
       const stdin = problem.testcases.map((tc) => tc.input);
       const expected_outputs = problem.testcases.map((tc) => tc.output);
-      executeCode(code, language_id, stdin, expected_outputs, id);
+      executeCode(code, language_id, stdin, expected_outputs, id, isSubmit);
     } catch (error) {
       console.log("Error executing code", error);
     }
   };
 
-  if (isProblemLoading || !problem) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-base-200">
-        <div className="card bg-base-100 p-8 shadow-xl">
-          <span className="loading loading-spinner loading-lg text-primary"></span>
-          <p className="mt-4 text-base-content/70">Loading problem...</p>
-        </div>
-      </div>
-    );
+  if (!problem) {
+    return null;
   }
 
   const renderTabContent = () => {
@@ -195,186 +189,126 @@ const ProblemPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-base-300 to-base-200 max-w-7xl w-full">
-      <nav className="navbar bg-base-100 shadow-lg px-4">
-        <div className="flex-1 gap-2">
+    <div className="flex flex-col h-[100dvh] bg-base-300 w-full overflow-hidden">
+      {/* Navbar - flex-none so it doesn't shrink */}
+      <nav className="navbar bg-base-100 border-b border-base-300 px-4 flex-col md:flex-row items-start md:items-center py-2 gap-4 flex-none z-10">
+        <div className="flex-1 w-full md:w-auto">
           <Link to={"/"} className="flex items-center gap-2 text-primary">
-            <Home className="w-6 h-6" />
-            <ChevronRight className="w-4 h-4" />
+            <Home className="w-5 h-5" />
+            <span className="font-bold hidden sm:inline">Home</span>
+            <ChevronRight className="w-4 h-4 text-base-content/50" />
           </Link>
-          <div className="mt-2">
-            <h1 className="text-xl font-bold">{problem.title}</h1>
-            <div className="flex items-center gap-2 text-sm text-base-content/70 mt-5">
-              <Clock className="w-4 h-4" />
-              <span>
-                Updated{" "}
-                {new Date(problem.createdAt).toLocaleString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </span>
-              <span className="text-base-content/30">•</span>
-              <Users className="w-4 h-4" />
-              <span>{submissionCount} Submissions</span>
-              <span className="text-base-content/30">•</span>
-              <ThumbsUp className="w-4 h-4" />
-              <span>95% Success Rate</span>
+          <div className="mt-1 flex items-center gap-4">
+            <h1 className="text-lg font-bold truncate max-w-xs sm:max-w-md">{problem.title}</h1>
+            <div className="hidden lg:flex items-center gap-3 text-xs text-base-content/60">
+              <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> Updated {new Date(problem.createdAt).toLocaleDateString()}</span>
+              <span className="flex items-center gap-1"><Users className="w-3 h-3" /> {submissionCount} Submissions</span>
             </div>
           </div>
         </div>
-        <div className="flex-none gap-4">
-          <button
-            className={`btn btn-ghost btn-circle ${
-              isBookmarked ? "text-primary" : ""
-            }`}
-            onClick={() => setIsBookmarked(!isBookmarked)}
-          >
-            <Bookmark className="w-5 h-5" />
+        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto justify-end">
+          <button className={`btn btn-ghost btn-sm btn-circle ${isBookmarked ? "text-primary" : ""}`} onClick={() => setIsBookmarked(!isBookmarked)}>
+            <Bookmark className="w-4 h-4" />
           </button>
-          <button className="btn btn-ghost btn-circle">
-            <Share2 className="w-5 h-5" />
-          </button>
-          <select
-            className="select select-bordered select-primary w-40"
-            value={selectedLanguage}
-            onChange={handleLanguageChange}
-          >
+          <select className="select select-bordered select-sm w-32" value={selectedLanguage} onChange={handleLanguageChange}>
             {Object.keys(problem.codeSnippets || {}).map((lang) => (
-              <option key={lang} value={lang}>
-                {lang.charAt(0).toUpperCase() + lang.slice(1)}
-              </option>
+              <option key={lang} value={lang}>{lang.charAt(0).toUpperCase() + lang.slice(1)}</option>
             ))}
           </select>
+          <button
+            className={`btn btn-primary btn-sm gap-2 ${isExecuting ? "loading" : ""}`}
+            onClick={(e) => handleRunCode(e, false)}
+            disabled={isExecuting}
+          >
+            {!isExecuting && <Play className="w-3 h-3" />} Run
+          </button>
+          <button 
+            className="btn btn-success btn-sm gap-2"
+            onClick={(e) => handleRunCode(e, true)}
+            disabled={isExecuting}
+          >
+            Submit
+          </button>
         </div>
       </nav>
 
-      <div className="container mx-auto p-4">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="card bg-base-100 shadow-xl">
-            <div className="card-body p-0">
-              <div className="tabs tabs-bordered">
-                <button
-                  className={`tab gap-2 ${
-                    activeTab === "description" ? "tab-active" : ""
-                  }`}
-                  onClick={() => setActiveTab("description")}
-                >
-                  <FileText className="w-4 h-4" />
-                  Description
-                </button>
-                <button
-                  className={`tab gap-2 ${
-                    activeTab === "submissions" ? "tab-active" : ""
-                  }`}
-                  onClick={() => setActiveTab("submissions")}
-                >
-                  <Code2 className="w-4 h-4" />
-                  Submissions
-                </button>
-                <button
-                  className={`tab gap-2 ${
-                    activeTab === "discussion" ? "tab-active" : ""
-                  }`}
-                  onClick={() => setActiveTab("discussion")}
-                >
-                  <MessageSquare className="w-4 h-4" />
-                  Discussion
-                </button>
-                <button
-                  className={`tab gap-2 ${
-                    activeTab === "hints" ? "tab-active" : ""
-                  }`}
-                  onClick={() => setActiveTab("hints")}
-                >
-                  <Lightbulb className="w-4 h-4" />
-                  Hints
-                </button>
-              </div>
-
-              <div className="p-6">{renderTabContent()}</div>
-            </div>
+      {/* Main Workspace */}
+      <div className="flex flex-col lg:flex-row flex-1 p-2 gap-2 min-h-0 overflow-y-auto lg:overflow-hidden">
+        
+        {/* Left Panel - Problem Details */}
+        <div className="flex-1 bg-base-100 rounded-xl flex flex-col border border-base-300 shadow-sm overflow-hidden min-h-[500px] lg:min-h-0">
+          {/* Tabs Header */}
+          <div className="flex border-b border-base-300 bg-base-200/50 flex-none px-2 pt-2 overflow-x-auto whitespace-nowrap scrollbar-hide">
+             <button className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'description' ? 'border-primary text-primary' : 'border-transparent text-base-content/70 hover:text-base-content'}`} onClick={() => setActiveTab('description')}><FileText className="w-4 h-4"/> Description</button>
+             <button className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'submissions' ? 'border-primary text-primary' : 'border-transparent text-base-content/70 hover:text-base-content'}`} onClick={() => setActiveTab('submissions')}><Code2 className="w-4 h-4"/> Submissions</button>
+             <button className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'discussion' ? 'border-primary text-primary' : 'border-transparent text-base-content/70 hover:text-base-content'}`} onClick={() => setActiveTab('discussion')}><MessageSquare className="w-4 h-4"/> Discussion</button>
+             <button className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'hints' ? 'border-primary text-primary' : 'border-transparent text-base-content/70 hover:text-base-content'}`} onClick={() => setActiveTab('hints')}><Lightbulb className="w-4 h-4"/> Hints</button>
           </div>
-
-          <div className="card bg-base-100 shadow-xl">
-            <div className="card-body p-0">
-              <div className="tabs tabs-bordered">
-                <button className="tab tab-active gap-2">
-                  <Terminal className="w-4 h-4" />
-                  Code Editor
-                </button>
-              </div>
-
-              <div className="h-[600px] w-full">
-                <Editor
-                  height="100%"
-                  language={selectedLanguage.toLowerCase()}
-                  theme="vs-dark"
-                  value={code}
-                  onChange={(value) => setCode(value || "")}
-                  options={{
-                    minimap: { enabled: false },
-                    fontSize: 20,
-                    lineNumbers: "on",
-                    roundedSelection: false,
-                    scrollBeyondLastLine: false,
-                    readOnly: false,
-                    automaticLayout: true,
-                  }}
-                />
-              </div>
-
-              <div className="p-4 border-t border-base-300 bg-base-200">
-                <div className="flex justify-between items-center">
-                  <button
-                    className={`btn btn-primary gap-2 ${
-                      isExecuting ? "loading" : ""
-                    }`}
-                    onClick={handleRunCode}
-                    disabled={isExecuting}
-                  >
-                    {!isExecuting && <Play className="w-4 h-4" />}
-                    Run Code
-                  </button>
-                  <button className="btn btn-success gap-2">
-                    Submit Solution
-                  </button>
-                </div>
-              </div>
-            </div>
+          {/* Tab Content */}
+          <div className="flex-1 overflow-y-auto p-6 bg-base-100">
+            {renderTabContent()}
           </div>
         </div>
 
-        <div className="card bg-base-100 shadow-xl mt-6">
-          <div className="card-body">
-            {submission ? (
-              <Submission submission={submission} />
-            ) : (
-              <>
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-xl font-bold">Test Cases</h3>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="table table-zebra w-full">
-                    <thead>
-                      <tr>
-                        <th>Input</th>
-                        <th>Expected Output</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {testcases.map((testCase, index) => (
-                        <tr key={index}>
-                          <td className="font-mono">{testCase.input}</td>
-                          <td className="font-mono">{testCase.output}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </>
-            )}
+        {/* Right Panel - Code & Console */}
+        <div className="flex-1 flex flex-col gap-2 min-h-[800px] lg:min-h-0">
+          
+          {/* Top Right - Editor */}
+          <div className="flex-[3] bg-base-100 rounded-xl flex flex-col border border-base-300 shadow-sm overflow-hidden min-h-[400px]">
+            <div className="flex items-center justify-between px-4 py-2 border-b border-base-300 bg-base-200/50 flex-none">
+              <div className="flex items-center gap-2 text-sm font-medium text-base-content/70">
+                <Code2 className="w-4 h-4" /> Code
+              </div>
+            </div>
+            <div className="flex-1 w-full min-h-0 relative">
+              <Editor
+                height="100%"
+                language={selectedLanguage.toLowerCase()}
+                theme="vs-dark"
+                value={code}
+                onChange={(value) => setCode(value || "")}
+                options={{
+                  minimap: { enabled: false },
+                  fontSize: 16,
+                  lineNumbers: "on",
+                  roundedSelection: false,
+                  scrollBeyondLastLine: false,
+                  readOnly: false,
+                  automaticLayout: true,
+                  padding: { top: 16, bottom: 16 },
+                }}
+              />
+            </div>
           </div>
+
+          {/* Bottom Right - Console / Test Cases */}
+          <div className="flex-[2] bg-base-100 rounded-xl flex flex-col border border-base-300 shadow-sm overflow-hidden min-h-[300px]">
+            <div className="flex items-center px-4 py-2 border-b border-base-300 bg-base-200/50 flex-none">
+              <div className="flex items-center gap-2 text-sm font-medium text-base-content/70">
+                <CheckCircle className="w-4 h-4" /> Test Cases
+              </div>
+            </div>
+            <div className="flex-1 overflow-y-auto p-4 bg-base-100">
+              {submission ? (
+                <Submission submission={submission} />
+              ) : (
+                <div className="flex flex-col gap-4">
+                  {testcases.map((testCase, index) => (
+                    <div key={index} className="flex flex-col gap-2">
+                      <div className="text-sm font-semibold text-base-content/70">Case {index + 1}</div>
+                      <div className="bg-base-200 rounded-lg p-3 font-mono text-sm">
+                        <div className="text-base-content/50 mb-1">Input:</div>
+                        <div className="text-base-content">{testCase.input}</div>
+                        <div className="text-base-content/50 mt-3 mb-1">Expected Output:</div>
+                        <div className="text-base-content">{testCase.output}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
         </div>
       </div>
     </div>

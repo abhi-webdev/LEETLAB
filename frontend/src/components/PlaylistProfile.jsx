@@ -46,8 +46,8 @@ const PlaylistProfile = () => {
   };
 
   return (
-    <div className="p-4 bg-base-200 min-h-screen">
-      <div className="max-w-4xl mx-auto">
+    <div className="w-full">
+      <div className="w-full">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-primary">My Playlists</h2>
           <button className="btn btn-primary btn-sm">

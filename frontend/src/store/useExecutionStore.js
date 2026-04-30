@@ -8,7 +8,7 @@ export const useExecutionStore = create((set)=>({
     isExecuting:false,
     submission:null,
 
-       executeCode:async ( source_code, language_id, stdin, expected_outputs, problemId)=>{
+       executeCode:async ( source_code, language_id, stdin, expected_outputs, problemId, isSubmit = false)=>{
         try {
             set({isExecuting:true});
             console.log("Submission:",JSON.stringify({
@@ -16,9 +16,10 @@ export const useExecutionStore = create((set)=>({
                 language_id,
                 stdin,
                 expected_outputs,
-                problemId
+                problemId,
+                isSubmit
             }));
-            const res = await axiosInstance.post("/execute-code" , { source_code, language_id, stdin, expected_outputs, problemId });
+            const res = await axiosInstance.post("/execute-code" , { source_code, language_id, stdin, expected_outputs, problemId, isSubmit });
 
             set({submission:res.data.submission});
       
