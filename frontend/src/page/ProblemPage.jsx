@@ -19,12 +19,14 @@ import { useProblemStore } from "../store/useProblemStore";
 import { getLanguageId } from "../lib/lang";
 import { useExecutionStore } from "../store/useExecutionStore";
 import { useSubmissionStore } from "../store/useSubmissionStore";
+import { useAuthStore } from "../store/useAuthStore";
 import Submission from "../components/Submission";
 import SubmissionsList from "../components/SubmissionList";
 
 const ProblemPage = () => {
   const { id } = useParams();
-  const { getProblemById, problem, isProblemLoading } = useProblemStore();
+  const { getProblemById, markProblemSolved, problem, isProblemLoading } = useProblemStore();
+  const { authUser } = useAuthStore();
 
   const {
     submission: submissions,
@@ -35,6 +37,7 @@ const ProblemPage = () => {
   } = useSubmissionStore();
 
   const [code, setCode] = useState("");
+  const [hasUserEditedCode, setHasUserEditedCode] = useState(false);
   const [activeTab, setActiveTab] = useState("description");
   const [selectedLanguage, setSelectedLanguage] = useState("JAVASCRIPT");
   const [isBookmarked, setIsBookmarked] = useState(false);
@@ -43,12 +46,23 @@ const ProblemPage = () => {
   useEffect(() => {
     getProblemById(id);
     getSubmissionCountForProblem(id);
-  }, [getProblemById, getSubmissionCountForProblem, id]);
+    getSubmissionForProblem(id);
+  }, [getProblemById, getSubmissionCountForProblem, getSubmissionForProblem, id]);
+
+  const latestSavedSubmission = useMemo(
+    () => submissions?.find((item) => item.sourceCode) || null,
+    [submissions]
+  );
 
   const initialCode = useMemo(
-    () => problem?.codeSnippets?.[selectedLanguage] || submission?.sourceCode || "",
-    [problem, selectedLanguage, submission?.sourceCode]
+    () =>
+      latestSavedSubmission?.sourceCode ||
+      problem?.codeSnippets?.[selectedLanguage] ||
+      "",
+    [latestSavedSubmission?.sourceCode, problem, selectedLanguage]
   );
+
+  const editorCode = hasUserEditedCode ? code : initialCode;
 
   const testcases = useMemo(
     () =>
@@ -70,16 +84,26 @@ const ProblemPage = () => {
   const handleLanguageChange = (e) => {
     const lang = e.target.value;
     setSelectedLanguage(lang);
-    setCode(problem.codeSnippets?.[lang] || "");
+    setCode("");
+    setHasUserEditedCode(false);
   };
 
-  const handleRunCode = (e, isSubmit = false) => {
+  const handleRunCode = async (e, isSubmit = false) => {
     e.preventDefault();
     try {
       const language_id = getLanguageId(selectedLanguage);
       const stdin = problem.testcases.map((tc) => tc.input);
       const expected_outputs = problem.testcases.map((tc) => tc.output);
-      executeCode(code || initialCode, language_id, stdin, expected_outputs, id, isSubmit);
+      const result = await executeCode(editorCode, language_id, stdin, expected_outputs, id, isSubmit);
+
+      if (isSubmit && result?.submission?.status === "Accepted") {
+        markProblemSolved(id, authUser?.id);
+      }
+
+      if (isSubmit && result?.submission) {
+        getSubmissionCountForProblem(id);
+        getSubmissionForProblem(id);
+      }
     } catch (error) {
       console.log("Error executing code", error);
     }
@@ -264,8 +288,11 @@ const ProblemPage = () => {
                 height="100%"
                 language={selectedLanguage.toLowerCase()}
                 theme="vs-dark"
-                value={code || initialCode}
-                onChange={(value) => setCode(value || "")}
+                value={editorCode}
+                onChange={(value) => {
+                  setCode(value || "");
+                  setHasUserEditedCode(true);
+                }}
                 options={{
                   minimap: { enabled: false },
                   fontSize: 16,

@@ -13,7 +13,9 @@ import {
   Tag,
   ChevronDown,
   ExternalLink,
+  Bookmark,
 } from "lucide-react";
+import AddToPlaylistModal from "../components/AddToPlaylist";
 
 // ── Data structure topic icons/colors ──────────────────────────
 const topicConfig = {
@@ -50,6 +52,7 @@ function ProblemsPage() {
   const [selectedTags, setSelectedTags] = useState([]);
   const [statusFilter, setStatusFilter] = useState("ALL"); // ALL, SOLVED, UNSOLVED
   const [showAllTopics, setShowAllTopics] = useState(false);
+  const [selectedProblemId, setSelectedProblemId] = useState(null);
 
   useEffect(() => {
     getAllProblems();
@@ -107,6 +110,14 @@ function ProblemsPage() {
   };
 
   const visibleTopics = showAllTopics ? tagStats : tagStats.slice(0, 8);
+
+  const handleOpenPlaylistModal = (problemId) => {
+    setSelectedProblemId(problemId);
+  };
+
+  const handleClosePlaylistModal = () => {
+    setSelectedProblemId(null);
+  };
 
   if (isProblemsLoading) {
     return (
@@ -297,9 +308,8 @@ function ProblemsPage() {
                     (s) => s.userId === authUser?.id
                   );
                   return (
-                    <Link
+                    <div
                       key={problem.id}
-                      to={`/problem/${problem.id}`}
                       className={`flex items-center gap-4 px-4 py-3.5 rounded-xl border transition-all duration-200 hover:shadow-lg group ${
                         isSolved
                           ? "bg-success/5 border-success/20 hover:border-success/40"
@@ -322,9 +332,12 @@ function ProblemsPage() {
 
                       {/* Title + Tags */}
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-sm group-hover:text-primary transition-colors truncate">
+                        <Link
+                          to={`/problem/${problem.id}`}
+                          className="font-semibold text-sm group-hover:text-primary transition-colors truncate block"
+                        >
                           {problem.title}
-                        </h3>
+                        </Link>
                         <div className="flex flex-wrap gap-1 mt-1">
                           {(problem.tags || []).map((tag, i) => {
                             const style = getTopicStyle(tag);
@@ -353,9 +366,23 @@ function ProblemsPage() {
                         {problem.difficulty}
                       </span>
 
-                      {/* Arrow */}
-                      <ExternalLink className="w-4 h-4 text-gray-600 group-hover:text-primary transition-colors flex-shrink-0" />
-                    </Link>
+                      <button
+                        type="button"
+                        className="btn btn-ghost btn-sm btn-circle flex-shrink-0"
+                        title="Add to playlist"
+                        onClick={() => handleOpenPlaylistModal(problem.id)}
+                      >
+                        <Bookmark className="w-4 h-4" />
+                      </button>
+
+                      <Link
+                        to={`/problem/${problem.id}`}
+                        className="btn btn-ghost btn-sm btn-circle flex-shrink-0"
+                        title="Solve problem"
+                      >
+                        <ExternalLink className="w-4 h-4 text-gray-600 group-hover:text-primary transition-colors" />
+                      </Link>
+                    </div>
                   );
                 })
               ) : (
@@ -379,6 +406,11 @@ function ProblemsPage() {
           </div>
         </div>
       </div>
+      <AddToPlaylistModal
+        isOpen={Boolean(selectedProblemId)}
+        onClose={handleClosePlaylistModal}
+        problemId={selectedProblemId}
+      />
     </div>
   );
 }

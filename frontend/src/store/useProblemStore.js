@@ -78,6 +78,24 @@ export const useProblemStore = create((set) => ({
     } finally {
       set({ isUpdating: false });
     }
+  },
+
+  markProblemSolved: (problemId, userId) => {
+    set((state) => ({
+      problems: state.problems.map((problem) => {
+        if (problem.id !== problemId) return problem;
+
+        const solvedBy = problem.solvedBy || [];
+        const alreadyMarked = solvedBy.some((entry) => entry.userId === userId);
+
+        return alreadyMarked
+          ? problem
+          : {
+              ...problem,
+              solvedBy: [...solvedBy, { userId, problemId }],
+            };
+      }),
+    }));
   }
 
   

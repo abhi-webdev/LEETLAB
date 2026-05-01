@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { usePlaylistStore } from '../store/usePlaylistStore';
 import { Link } from 'react-router-dom';
 import { BookOpen, ChevronDown, ChevronUp, Clock, List, Tag, ExternalLink } from 'lucide-react';
+import CreatePlaylistModal from './CreatePlaylistModal';
 
 const PlaylistProfile = () => {
-  const { getAllPlaylists, playlists , deletePlaylist } = usePlaylistStore();
+  const { getAllPlaylists, createPlaylist, playlists, deletePlaylist, isLoading } = usePlaylistStore();
   const [expandedPlaylist, setExpandedPlaylist] = useState(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   useEffect(() => {
     getAllPlaylists();
@@ -21,6 +23,10 @@ const PlaylistProfile = () => {
 
   const handleDelete = async (id) => {
     await deletePlaylist(id);
+  };
+
+  const handleCreatePlaylist = async (data) => {
+    await createPlaylist(data);
   };
 
   const getDifficultyBadge = (difficulty) => {
@@ -50,7 +56,11 @@ const PlaylistProfile = () => {
       <div className="w-full">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-primary">My Playlists</h2>
-          <button className="btn btn-primary btn-sm">
+          <button
+            className="btn btn-primary btn-sm"
+            onClick={() => setIsCreateModalOpen(true)}
+            disabled={isLoading}
+          >
             Create Playlist
           </button>
         </div>
@@ -61,7 +71,13 @@ const PlaylistProfile = () => {
               <h3 className="text-xl font-medium">No playlists found</h3>
               <p className="text-base-content/70">Create your first playlist to organize problems!</p>
               <div className="card-actions justify-center mt-4">
-                <button className="btn btn-primary">Create Playlist</button>
+                <button
+                  className="btn btn-primary"
+                  onClick={() => setIsCreateModalOpen(true)}
+                  disabled={isLoading}
+                >
+                  Create Playlist
+                </button>
               </div>
             </div>
           </div>
@@ -86,7 +102,7 @@ const PlaylistProfile = () => {
                         <div className="flex items-center gap-2 mt-1 text-sm text-base-content/70">
                           <div className="flex items-center gap-1">
                             <List size={14} />
-                            <span>{playlist.problems.length} problems</span>
+                            <span>{playlist.problems?.length || 0} problems</span>
                           </div>
                           <div className="flex items-center gap-1">
                             <Clock size={14} />
@@ -108,7 +124,7 @@ const PlaylistProfile = () => {
                     <div className="mt-4 pt-4 border-t border-base-300">
                       <h4 className="text-lg font-semibold mb-3">Problems in this playlist</h4>
                       
-                      {playlist.problems.length === 0 ? (
+                      {(playlist.problems?.length || 0) === 0 ? (
                         <div className="alert">
                           <span>No problems added to this playlist yet.</span>
                         </div>
@@ -166,6 +182,11 @@ const PlaylistProfile = () => {
           </div>
         )}
       </div>
+      <CreatePlaylistModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSubmit={handleCreatePlaylist}
+      />
     </div>
   );
 };

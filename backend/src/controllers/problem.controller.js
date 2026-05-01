@@ -93,7 +93,7 @@ export const getAllProblems = async (req, res) => {
         include: {
           solvedBy: {
             where: {
-              id: req.user.id,
+              userId: req.user.id,
             },
           },
         },

@@ -9,6 +9,6 @@ playlistRoutes.get("/:playlistId", authMiddleware, getPlaylistDetails)
 playlistRoutes.post("/create-playlist", authMiddleware, createPlaylist)
 playlistRoutes.post("/:playlistId/add-problem", authMiddleware, addProblemToPlaylist)
 playlistRoutes.delete("/:playlistId", authMiddleware, deletePlaylist)
-playlistRoutes.delete("/:playlistId/remove-problem", authMiddleware, removeProblemFromPlaylist)
+playlistRoutes.delete("/:playlistId/remove-problems", authMiddleware, removeProblemFromPlaylist)
 
 export default playlistRoutes

@@ -17,13 +17,12 @@ const AddToPlaylistModal = ({ isOpen, onClose, problemId }) => {
     if (!selectedPlaylist) return;
 
     await addProblemToPlaylist(selectedPlaylist, [problemId]);
+    setSelectedPlaylist('');
     onClose();
   };
 
   if (!isOpen) return null;
 
-  console.log(playlists);
-  
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-base-100 rounded-lg shadow-xl w-full max-w-md">
@@ -52,6 +51,13 @@ const AddToPlaylistModal = ({ isOpen, onClose, problemId }) => {
                 </option>
               ))}
             </select>
+            {!isLoading && playlists.length === 0 && (
+              <label className="label">
+                <span className="label-text-alt text-base-content/60">
+                  Create a playlist from your profile first.
+                </span>
+              </label>
+            )}
           </div>
 
           <div className="flex justify-end gap-2 mt-6">

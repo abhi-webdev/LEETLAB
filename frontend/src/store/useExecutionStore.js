@@ -28,9 +28,11 @@ export const useExecutionStore = create((set)=>({
             set({submission:res.data.submission});
       
             toast.success(res.data.message);
+            return res.data;
         } catch (error) {
             console.log("Error executing code",error);
             toast.error(error.response?.data?.error || "Error executing code");
+            return null;
         }
         finally{
             set({isExecuting:false});

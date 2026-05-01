@@ -5,21 +5,35 @@ export const createPlaylist = async(req, res) => {
         const {name, description} = req.body
         const userId = req.user.id
 
-        const playList = await db.playlist.create({
+        if(!name?.trim()) {
+            return res.status(400).json({ error: "Playlist name is required" });
+        }
+
+        const playlist = await db.playlist.create({
             data: {
-                name, 
+                name: name.trim(), 
                 description,
                 userId
+            },
+            include: {
+                problems: {
+                    include: {
+                        problem: true
+                    }
+                }
             }
         })
 
         res.status(200).json({
             success: true,
             message: "Playlist created successfully",
-            playList
+            playlist
         })
     } catch (error) {
         console.error("Error creating playlist", error);
+        if(error.code === "P2002") {
+            return res.status(409).json({ error: "A playlist with this name already exists" });
+        }
         return res.status(500).json({ error: "Error creating playlist" });
     }
 }
@@ -92,17 +106,31 @@ export const addProblemToPlaylist = async(req, res) => {
             })
         }
 
+        const playlist = await db.playlist.findFirst({
+            where: {
+                id: playlistId,
+                userId: req.user.id
+            }
+        })
+
+        if(!playlist) {
+            return res.status(404).json({
+                error: "Playlist not found"
+            })
+        }
+
         // create records for each problem in playlist
         const problemInPlaylist = await db.problemInPlaylist.createMany({
             data: problemIds.map((problemId) => ({
                 playlistId,
                 problemId
-            }))
+            })),
+            skipDuplicates: true
         })
 
         res.status(201).json({
             success: true,
-            message: "Problem added to playlist successfully",
+            message: problemInPlaylist.count > 0 ? "Problem added to playlist successfully" : "Problem is already in this playlist",
             problemInPlaylist
         })
     } catch (error) {
