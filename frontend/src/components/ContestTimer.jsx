@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 const ContestTimer = ({ targetDate, label = "", onEnd }) => {
-  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
-
-  function calculateTimeLeft() {
+  const calculateTimeLeft = useCallback(() => {
     const difference = new Date(targetDate) - new Date();
     if (difference <= 0) return null;
 
@@ -13,7 +11,9 @@ const ContestTimer = ({ targetDate, label = "", onEnd }) => {
       minutes: Math.floor((difference / 1000 / 60) % 60),
       seconds: Math.floor((difference / 1000) % 60),
     };
-  }
+  }, [targetDate]);
+
+  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -26,7 +26,7 @@ const ContestTimer = ({ targetDate, label = "", onEnd }) => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [targetDate]);
+  }, [calculateTimeLeft, onEnd]);
 
   if (!timeLeft) {
     return <span className="text-success font-bold">{label || "Time's up!"}</span>;

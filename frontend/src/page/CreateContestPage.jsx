@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useContestStore } from "../store/useContestStore";
 import { useProblemStore } from "../store/useProblemStore";
-import { useAuthStore } from "../store/useAuthStore";
 import { useNavigate } from "react-router-dom";
 import { Calendar, Clock, Trophy, Plus, X, Search } from "lucide-react";
 import toast from "react-hot-toast";

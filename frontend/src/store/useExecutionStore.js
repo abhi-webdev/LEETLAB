@@ -19,14 +19,18 @@ export const useExecutionStore = create((set)=>({
                 problemId,
                 isSubmit
             }));
-            const res = await axiosInstance.post("/execute-code" , { source_code, language_id, stdin, expected_outputs, problemId, isSubmit });
+            const res = await axiosInstance.post(
+                "/execute-code",
+                { source_code, language_id, stdin, expected_outputs, problemId, isSubmit },
+                { timeout: 60000 }
+            );
 
             set({submission:res.data.submission});
       
             toast.success(res.data.message);
         } catch (error) {
             console.log("Error executing code",error);
-            toast.error("Error executing code");
+            toast.error(error.response?.data?.error || "Error executing code");
         }
         finally{
             set({isExecuting:false});

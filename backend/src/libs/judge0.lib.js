@@ -1,5 +1,14 @@
 import axios from "axios";
 
+const JUDGE0_TIMEOUT_MS = Number(process.env.JUDGE0_TIMEOUT_MS || 15000);
+const JUDGE0_POLL_INTERVAL_MS = Number(process.env.JUDGE0_POLL_INTERVAL_MS || 1000);
+const JUDGE0_MAX_POLL_ATTEMPTS = Number(process.env.JUDGE0_MAX_POLL_ATTEMPTS || 30);
+
+const judge0Client = axios.create({
+  baseURL: process.env.JUDGE0_API_URL,
+  timeout: JUDGE0_TIMEOUT_MS,
+});
+
 export const getJudge0LanguageId = (language) => {
   const languageMap = {
     PYTHON: 71,
@@ -10,8 +19,12 @@ export const getJudge0LanguageId = (language) => {
 };
 
 export const submitBatch = async (submissions) => {
-  const { data } = await axios.post(
-    `${process.env.JUDGE0_API_URL}/submissions/batch?base64_encoded=false`,
+  if (!process.env.JUDGE0_API_URL) {
+    throw new Error("JUDGE0_API_URL is not configured");
+  }
+
+  const { data } = await judge0Client.post(
+    "/submissions/batch?base64_encoded=false",
     {
       submissions,
     },
@@ -23,9 +36,13 @@ export const submitBatch = async (submissions) => {
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 export const pollBatchResults = async (tokens) => {
-  while (true) {
-    const { data } = await axios.get(
-      `${process.env.JUDGE0_API_URL}/submissions/batch`,
+  if (!tokens.length) {
+    throw new Error("No Judge0 submission tokens received");
+  }
+
+  for (let attempt = 1; attempt <= JUDGE0_MAX_POLL_ATTEMPTS; attempt++) {
+    const { data } = await judge0Client.get(
+      "/submissions/batch",
       {
         params: {
           tokens: tokens.join(","),
@@ -42,8 +59,10 @@ export const pollBatchResults = async (tokens) => {
       return results;
     }
 
-    await sleep(1000);
+    await sleep(JUDGE0_POLL_INTERVAL_MS);
   }
+
+  throw new Error("Judge0 execution timed out");
 };
 
 export function getLanguageName (languageId) {

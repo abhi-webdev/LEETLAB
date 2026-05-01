@@ -1,14 +1,16 @@
 import axios from "axios"
 
-// export const axiosInstance = axios.create({
-//     baseURL: import.meta.env.MODE === "development" ? "http://localhost:8080/api/v1" : "/api/v1",
-//     withCredentials: true 
-// })
+const productionBaseURL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api/v1`
+  : "/api/v1";
 
-export const axiosInstance = axios.create({
-    baseURL:
+const apiBaseURL =
   import.meta.env.MODE === "development"
     ? "http://localhost:8080/api/v1"
-    : `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api/v1`,
-    withCredentials: true
+    : productionBaseURL;
+
+export const axiosInstance = axios.create({
+  baseURL: apiBaseURL,
+  withCredentials: true,
+  timeout: 45000,
 });

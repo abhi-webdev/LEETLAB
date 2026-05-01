@@ -14,6 +14,7 @@ import {
   BookOpen,
   GitBranch,
   Terminal,
+  LogIn,
 } from "lucide-react";
 
 function HomePage() {
@@ -21,8 +22,10 @@ function HomePage() {
   const { authUser } = useAuthStore();
 
   useEffect(() => {
-    getAllProblems();
-  }, [getAllProblems]);
+    if (authUser) {
+      getAllProblems();
+    }
+  }, [authUser, getAllProblems]);
 
   const stats = useMemo(() => {
     if (!Array.isArray(problems) || problems.length === 0)

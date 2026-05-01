@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useContestStore } from "../store/useContestStore";
-import { useAuthStore } from "../store/useAuthStore";
 import {
   Loader,
   Trophy,
@@ -34,8 +33,6 @@ function ContestDetailPage() {
     isSubmitting,
     declareWinner,
   } = useContestStore();
-  const { authUser } = useAuthStore();
-
   const [activeProblemIndex, setActiveProblemIndex] = useState(0);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [code, setCode] = useState("");
@@ -46,28 +43,6 @@ function ContestDetailPage() {
   useEffect(() => {
     getContestById(id);
   }, [id, getContestById]);
-
-  // Set initial code when problem changes
-  useEffect(() => {
-    if (contest?.problems?.[activeProblemIndex]) {
-      const problem = contest.problems[activeProblemIndex].problem;
-      const langName = languageOptions
-        .find((l) => l.value === languageId)
-        ?.label?.toUpperCase();
-      const snippets = problem.codeSnippets;
-      if (snippets && typeof snippets === "object") {
-        setCode(snippets[langName] || snippets[Object.keys(snippets)[0]] || "");
-      }
-      setResults(null);
-    }
-  }, [activeProblemIndex, contest, languageId]);
-
-  // Auto-show leaderboard for contest creator
-  useEffect(() => {
-    if (contest?.isCreator) {
-      setShowLeaderboard(true);
-    }
-  }, [contest?.isCreator]);
 
   const handleJoin = async () => {
     await joinContest(id);
@@ -94,6 +69,18 @@ function ContestDetailPage() {
     }
   };
 
+  const handleProblemChange = (index) => {
+    setActiveProblemIndex(index);
+    setCode("");
+    setResults(null);
+  };
+
+  const handleLanguageChange = (value) => {
+    setLanguageId(value);
+    setCode("");
+    setResults(null);
+  };
+
   const handleDeclareWinner = async (winnerId) => {
     setDeclaringWinner(true);
     await declareWinner(id, winnerId);
@@ -114,6 +101,15 @@ function ContestDetailPage() {
   const isActive = liveStatus === "ACTIVE";
   const isJoined = contest.isJoined;
   const isCreator = contest.isCreator;
+  const langName = languageOptions
+    .find((l) => l.value === languageId)
+    ?.label?.toUpperCase();
+  const snippets = activeProblem?.codeSnippets;
+  const initialCode =
+    snippets && typeof snippets === "object"
+      ? snippets[langName] || snippets[Object.keys(snippets)[0]] || ""
+      : "";
+  const isLeaderboardVisible = showLeaderboard || isCreator;
 
   const statusColors = {
     UPCOMING: "text-info",
@@ -164,7 +160,7 @@ function ContestDetailPage() {
               <button
                 onClick={() => setShowLeaderboard(!showLeaderboard)}
                 className={`btn btn-sm gap-1 ${
-                  showLeaderboard ? "btn-primary" : "btn-ghost"
+                  isLeaderboardVisible ? "btn-primary" : "btn-ghost"
                 }`}
               >
                 <Trophy className="w-4 h-4" />
@@ -210,7 +206,7 @@ function ContestDetailPage() {
             {contest.problems?.map((cp, idx) => (
               <button
                 key={cp.id}
-                onClick={() => setActiveProblemIndex(idx)}
+                onClick={() => handleProblemChange(idx)}
                 className={`w-full flex items-center gap-2 px-3 py-2.5 rounded-lg mb-1 transition-all text-left ${
                   idx === activeProblemIndex
                     ? "bg-primary/20 text-primary border-l-2 border-primary"
@@ -258,7 +254,7 @@ function ContestDetailPage() {
               {contest.problems?.map((cp, idx) => (
                 <button
                   key={cp.id}
-                  onClick={() => setActiveProblemIndex(idx)}
+                  onClick={() => handleProblemChange(idx)}
                   className={`btn btn-sm whitespace-nowrap ${
                     idx === activeProblemIndex ? "btn-primary" : "btn-ghost"
                   }`}
@@ -363,7 +359,7 @@ function ContestDetailPage() {
               <select
                 className="select select-sm select-bordered bg-base-300"
                 value={languageId}
-                onChange={(e) => setLanguageId(parseInt(e.target.value))}
+                onChange={(e) => handleLanguageChange(parseInt(e.target.value))}
               >
                 {languageOptions.map((lang) => (
                   <option key={lang.value} value={lang.value}>
@@ -395,7 +391,7 @@ function ContestDetailPage() {
                   languageOptions.find((l) => l.value === languageId)?.monaco ||
                   "javascript"
                 }
-                value={code}
+                value={code || initialCode}
                 onChange={(value) => setCode(value || "")}
                 theme="vs-dark"
                 options={{
@@ -450,7 +446,7 @@ function ContestDetailPage() {
         </div>
 
         {/* Leaderboard Panel */}
-        {showLeaderboard && (
+        {isLeaderboardVisible && (
           <div className="w-80 border-l border-base-300 bg-base-200/50 overflow-y-auto">
             <div className="p-4">
               <h3 className="font-bold text-lg mb-4 flex items-center gap-2">

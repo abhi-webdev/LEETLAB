@@ -1,6 +1,5 @@
 import React from "react";
-import { motion } from "framer-motion";
-import { Code, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 
 
@@ -19,10 +18,7 @@ const difficultyText = {
 
 const ProblemCard = ({ problem, onSelect }) => {
   return (
-    <motion.div
-      whileHover={{ y: -5, boxShadow: "0 10px 20px rgba(0,0,0,0.1)" }}
-      className=" dark:bg-gray-850 rounded-lg border  dark:border-gray-700 overflow-hidden"
-    >
+    <div className=" dark:bg-gray-850 rounded-lg border  dark:border-gray-700 overflow-hidden transition-shadow hover:shadow-lg">
       <div className="p-4 flex flex-col h-full">
         <div className="flex justify-between items-start mb-3">
           <span className={`text-xs font-bold px-2 py-1 rounded-full text-white ${difficultyColors[problem.difficulty]}`}>
@@ -61,7 +57,7 @@ const ProblemCard = ({ problem, onSelect }) => {
           <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
         </button>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

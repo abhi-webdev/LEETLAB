@@ -145,6 +145,10 @@ export const executeCode = async (req, res) => {
     });
   } catch (error) {
     console.error("Error executing code:", error.message);
-    res.status(500).json({ error: "Failed to execute code" });
+    const isTimeout = error.message?.toLowerCase().includes("timed out") || error.code === "ECONNABORTED";
+    res.status(isTimeout ? 504 : 500).json({
+      error: isTimeout ? "Code execution timed out" : "Failed to execute code",
+      message: error.message,
+    });
   }
 };

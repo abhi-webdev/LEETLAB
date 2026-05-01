@@ -10,7 +10,7 @@ const AddToPlaylistModal = ({ isOpen, onClose, problemId }) => {
     if (isOpen) {
       getAllPlaylists();
     }
-  }, [isOpen]);
+  }, [getAllPlaylists, isOpen]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

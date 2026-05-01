@@ -465,7 +465,11 @@ export const submitContestSolution = async (req, res) => {
     });
   } catch (error) {
     console.error("Error submitting contest solution:", error.message);
-    return res.status(500).json({ error: "Failed to submit contest solution" });
+    const isTimeout = error.message?.toLowerCase().includes("timed out") || error.code === "ECONNABORTED";
+    return res.status(isTimeout ? 504 : 500).json({
+      error: isTimeout ? "Code execution timed out" : "Failed to submit contest solution",
+      message: error.message,
+    });
   }
 };
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Editor from "@monaco-editor/react";
 import {
   Play,
@@ -41,34 +41,32 @@ const ProblemPage = () => {
   const [activeTab, setActiveTab] = useState("description");
   const [selectedLanguage, setSelectedLanguage] = useState("JAVASCRIPT");
   const [isBookmarked, setIsBookmarked] = useState(false);
-  const [testcases, setTestCases] = useState([]);
-
   const { executeCode, submission, isExecuting } = useExecutionStore();
 
   useEffect(() => {
     getProblemById(id);
     getSubmissionCountForProblem(id);
-  }, [id]);
+  }, [getProblemById, getSubmissionCountForProblem, id]);
 
-  useEffect(() => {
-    if (problem) {
-      setCode(
-        problem.codeSnippets?.[selectedLanguage] || submission?.sourceCode || ""
-      );
-      setTestCases(
-        problem.testcases?.map((tc) => ({
-          input: tc.input,
-          output: tc.output,
-        })) || []
-      );
-    }
-  }, [problem, selectedLanguage]);
+  const initialCode = useMemo(
+    () => problem?.codeSnippets?.[selectedLanguage] || submission?.sourceCode || "",
+    [problem, selectedLanguage, submission?.sourceCode]
+  );
+
+  const testcases = useMemo(
+    () =>
+      problem?.testcases?.map((tc) => ({
+        input: tc.input,
+        output: tc.output,
+      })) || [],
+    [problem]
+  );
 
   useEffect(() => {
     if (activeTab === "submissions" && id) {
       getSubmissionForProblem(id);
     }
-  }, [activeTab, id]);
+  }, [activeTab, getSubmissionForProblem, id]);
 
   console.log("submission", submissions);
 
@@ -84,14 +82,18 @@ const ProblemPage = () => {
       const language_id = getLanguageId(selectedLanguage);
       const stdin = problem.testcases.map((tc) => tc.input);
       const expected_outputs = problem.testcases.map((tc) => tc.output);
-      executeCode(code, language_id, stdin, expected_outputs, id, isSubmit);
+      executeCode(code || initialCode, language_id, stdin, expected_outputs, id, isSubmit);
     } catch (error) {
       console.log("Error executing code", error);
     }
   };
 
-  if (!problem) {
-    return null;
+  if (isProblemLoading || !problem) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader className="size-10 animate-spin" />
+      </div>
+    );
   }
 
   const renderTabContent = () => {
@@ -105,7 +107,7 @@ const ProblemPage = () => {
               <>
                 <h3 className="text-xl font-bold mb-4">Examples:</h3>
                 {Object.entries(problem.examples).map(
-                  ([lang, example], idx) => (
+                  ([lang, example]) => (
                     <div
                       key={lang}
                       className="bg-base-200 p-6 rounded-xl mb-6 font-mono"
@@ -265,7 +267,7 @@ const ProblemPage = () => {
                 height="100%"
                 language={selectedLanguage.toLowerCase()}
                 theme="vs-dark"
-                value={code}
+                value={code || initialCode}
                 onChange={(value) => setCode(value || "")}
                 options={{
                   minimap: { enabled: false },

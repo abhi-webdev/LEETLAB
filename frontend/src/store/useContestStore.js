@@ -83,7 +83,9 @@ export const useContestStore = create((set, get) => ({
   submitContestSolution: async (contestId, data) => {
     try {
       set({ isSubmitting: true });
-      const res = await axiosInstance.post(`/contest/${contestId}/submit`, data);
+      const res = await axiosInstance.post(`/contest/${contestId}/submit`, data, {
+        timeout: 60000,
+      });
       toast.success(res.data.message);
       // Refresh leaderboard
       get().getLeaderboard(contestId);
