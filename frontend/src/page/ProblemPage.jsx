@@ -2,18 +2,15 @@ import React, { useState, useEffect, useMemo } from "react";
 import Editor from "@monaco-editor/react";
 import {
   Play,
+  Loader,
   FileText,
   MessageSquare,
   Lightbulb,
   Bookmark,
-  Share2,
   Clock,
   ChevronRight,
-  BookOpen,
-  Terminal,
   Code2,
   Users,
-  ThumbsUp,
   Home,
   CheckCircle,
 } from "lucide-react";
