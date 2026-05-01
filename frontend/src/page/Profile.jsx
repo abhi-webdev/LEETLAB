@@ -5,6 +5,7 @@ import { useAuthStore } from "../store/useAuthStore";
 import ProfileSubmission from "../components/ProfileSubmission";
 import ProblemSolvedByUser from "../components/ProblemSolvedByUser";
 import PlaylistProfile from "../components/PlaylistProfile";
+import AdminCreatedProblems from "../components/AdminCreatedProblems";
 
 const Profile = () => {
   const { authUser, updateProfile } = useAuthStore();
@@ -181,6 +182,7 @@ const Profile = () => {
 
             {/* Activities Section */}
             <div className="space-y-8">
+              {authUser?.role === "ADMIN" && <AdminCreatedProblems />}
               <ProfileSubmission />
               <ProblemSolvedByUser />
               <PlaylistProfile />

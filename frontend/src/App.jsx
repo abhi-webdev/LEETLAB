@@ -11,6 +11,7 @@ import HomePage from "./page/HomePage";
 import LoginPage from "./page/LoginPage";
 import SignUpPage from "./page/SignUpPage";
 import AddProblem from "./page/AddProblem";
+import EditProblem from "./page/EditProblem";
 import ProblemPage from "./page/ProblemPage";
 import Profile from "./page/Profile";
 import ProblemsPage from "./page/ProblemsPage";
@@ -51,6 +52,7 @@ function App() {
           <Route path="/pricing" element={<PricingPage />} />
           <Route element={<AdminRoute/>}>
             <Route path="/add-problem" element={authUser ? <AddProblem /> : <Navigate to="/" />} />
+            <Route path="/edit-problem/:id" element={authUser ? <EditProblem /> : <Navigate to="/" />} />
             <Route path="/create-contest" element={<CreateContestPage />} />
           </Route>
         </Route>

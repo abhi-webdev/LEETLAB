@@ -22,35 +22,35 @@ const Navbar = () => {
         {/* Logo Section */}
         <Link to="/" className="flex items-center gap-3 group">
           <div className="relative">
-            <img 
-              src="/leetlab.svg" 
-              className="h-10 w-10 bg-primary/10 p-1.5 rounded-xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-6" 
+            <img
+              src="/leetlab.svg"
+              className="h-10 w-10 bg-primary/10 p-1.5 rounded-xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-6"
             />
             <div className="absolute -inset-1 bg-primary/20 blur-lg rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </div>
-          <span className="text-xl font-bold tracking-tight bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent hidden sm:block">
+          <span className={`text-xl font-bold tracking-tight bg-clip-text text-transparent hidden sm:block ${theme === "light" ? "bg-gradient-to-r from-base-content via-primary to-base-content" : "bg-gradient-to-r from-white to-gray-400"}`}>
             Leetlab
           </span>
         </Link>
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-8">
-          <Link 
-            to="/problems" 
+          <Link
+            to="/problems"
             className={`flex items-center gap-2 text-sm font-medium transition-all duration-200 hover:text-primary ${isActive('/problems') ? 'nav-link-active' : 'text-base-content/60'}`}
           >
             <Code2 className="w-4 h-4" />
             Problems
           </Link>
-          <Link 
-            to="/contests" 
+          <Link
+            to="/contests"
             className={`flex items-center gap-2 text-sm font-medium transition-all duration-200 hover:text-primary ${isActive('/contests') ? 'nav-link-active' : 'text-base-content/60'}`}
           >
             <Trophy className="w-4 h-4" />
             Contests
           </Link>
-          <Link 
-            to="/pricing" 
+          <Link
+            to="/pricing"
             className={`flex items-center gap-2 text-sm font-medium transition-all duration-200 hover:text-primary ${isActive('/pricing') ? 'nav-link-active' : 'text-base-content/60'}`}
           >
             <Zap className="w-4 h-4" />
@@ -95,13 +95,13 @@ const Navbar = () => {
               </label>
               <div
                 tabIndex={0}
-                className="dropdown-content mt-3 z-[1] p-2 glass-navbar border border-white/10 rounded-2xl w-60 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
+                className="dropdown-content mt-3 z-[1] p-2 bg-base-100 border border-base-content/10 shadow-2xl rounded-2xl w-56 md:w-48 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
               >
                 <div className="px-4 py-3 mb-2 border-b border-base-content/10">
                   <p className="text-sm font-bold text-base-content truncate">{authUser?.name}</p>
                   <p className="text-[10px] text-base-content/60 truncate">{authUser?.email}</p>
                 </div>
-                
+
                 <ul className="menu menu-sm p-0 gap-1">
                   <li>
                     <Link to="/profile" className="flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-primary/10 hover:text-primary transition-all group">

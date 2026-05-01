@@ -143,7 +143,52 @@ export const getProblemById = async (req, res) => {
 };
 
 export const updateProblem = async (req, res) => {
-  // const {id} = req.params;
+  const { id } = req.params;
+  const {
+    title,
+    description,
+    difficulty,
+    tags,
+    examples,
+    constraints,
+    testcases,
+    codeSnippets,
+    referenceSolutions,
+  } = req.body;
+
+  try {
+    const getProblem = await db.problem.findUnique({
+      where: { id },
+    });
+
+    if (!getProblem) {
+      return res.status(404).json({ error: "No problem found" });
+    }
+
+    const updatedProblem = await db.problem.update({
+      where: { id },
+      data: {
+        title,
+        description,
+        difficulty,
+        tags,
+        examples,
+        constraints,
+        testcases,
+        codeSnippets,
+        referenceSolutions,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Problem updated successfully",
+      problem: updatedProblem,
+    });
+  } catch (error) {
+    console.error("Error updating problem", error);
+    return res.status(500).json({ error: "Error updating problem by id" });
+  }
 };
 export const deleteProblem = async (req, res) => {
   const { id } = req.params;
@@ -199,5 +244,24 @@ export const getProblemsSolvedByUser = async (req, res) => {
   } catch (error) {
     console.error("Problem solvedBy error", error);
     return res.status(500).json({ error: "Error featching problem" });
+  }
+};
+
+export const getCreatedProblemsByUser = async (req, res) => {
+  const userId = req.user?.id;
+  try {
+    const problems = await db.problem.findMany({
+      where: { userId: userId },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Created problems fetched successfully",
+      problems,
+    });
+  } catch (error) {
+    console.error("Error fetching created problems", error);
+    return res.status(500).json({ error: "Error fetching created problems" });
   }
 };

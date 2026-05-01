@@ -6,8 +6,10 @@ export const useProblemStore = create((set) => ({
   problems: [],
   problem: null,
   solvedProblems: [],
+  createdProblems: [],
   isProblemsLoading: false,
   isProblemLoading: false,
+  isUpdating: false,
 
   getAllProblems: async () => {
     try {
@@ -47,6 +49,34 @@ export const useProblemStore = create((set) => ({
     } catch (error) {
       console.log("Error getting solved problems", error);
       toast.error("Error getting solved problems");
+    }
+  },
+
+  getCreatedProblemsByUser: async () => {
+    try {
+      set({ isProblemsLoading: true });
+      const res = await axiosInstance.get("/problems/get-created-problems");
+      set({ createdProblems: res.data.problems });
+    } catch (error) {
+      console.log("Error getting created problems", error);
+      toast.error("Error getting created problems");
+    } finally {
+      set({ isProblemsLoading: false });
+    }
+  },
+
+  updateProblem: async (id, data) => {
+    try {
+      set({ isUpdating: true });
+      const res = await axiosInstance.put(`/problems/update-problem/${id}`, data);
+      toast.success(res.data.message || "Problem updated successfully");
+      return res.data.problem;
+    } catch (error) {
+      console.log("Error updating problem", error);
+      toast.error(error.response?.data?.error || "Error updating problem");
+      throw error;
+    } finally {
+      set({ isUpdating: false });
     }
   }
 
